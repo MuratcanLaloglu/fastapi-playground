@@ -18,30 +18,30 @@ my_posts: list[dict] = [
 ]
 
 
-def find_post(id: int):
+def find_post(id: int) -> int:
     for p in my_posts:
         if p["id"] == id:
             return p
 
 
-def find_index_post(id: int):
+def find_index_post(id: int) -> int:
     for i, p in enumerate(my_posts):
         if p["id"] == id:
             return i
 
 
 @app.get("/")
-def root():
+def root() -> dict:
     return {"message": "This is my API"}
 
 
 @app.get("/posts")
-def get_posts():
+def get_posts() -> dict:
     return {"data": my_posts}
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: Post):
+def create_post(post: Post) -> dict:
     post_dict = post.dict()
     post_dict["id"] = randrange(0, 1000000)
     my_posts.append(post_dict)
@@ -49,7 +49,7 @@ def create_post(post: Post):
 
 
 @app.get("/posts/{id}")
-def get_post(id: int):
+def get_post(id: int) -> dict:
     post = find_post(id)
     if not post:
         raise HTTPException(
@@ -60,10 +60,13 @@ def get_post(id: int):
 
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
+def delete_post(id: int) -> Response:
     index = find_index_post(id)
-    if index == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id:{id} does not exist")
-    
+    if index is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"post with id:{id} does not exist",
+        )
+
     my_posts.pop(index)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
