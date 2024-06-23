@@ -18,7 +18,7 @@ my_posts: list[dict] = [
 ]
 
 
-def find_post(id: int) -> int | None:
+def find_post(id: int) -> dict | None:
     for p in my_posts:
         if p["id"] == id:
             return p
